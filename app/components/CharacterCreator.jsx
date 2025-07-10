@@ -4,11 +4,23 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./CharacterCreator.module.css";
 
+/*Color Options: Sky Blue, Yellow, Green, Pink, Purple, Orange, Red, Green, Navy, White
+Character Style: Dinosaur, Puppy, Kitty, Bunny, Penguin, Panda, Unicorn, Fish 
+Background: Magical Forest, Space, Beach, Snow land, City
+*/
+
 const COLORS = [
   { name: "Blue", value: "#3498db" },
   { name: "Green", value: "#2ecc71" },
   { name: "Yellow", value: "#f1c40f" },
   { name: "Purple", value: "#9b59b6" },
+  { name: "Sky Blue", value: "#87CEEB" },
+  // { name: "Navy", value: "#000080" },
+  { name: "Pink", value: "#FFC0CB" },
+  { name: "Orange", value: "#FFA500" },
+  { name: "Teal", value: "#9EFCFF" },
+  { name: "Red", value: "#FF0000" },
+  { name: "White", value: "#FFFF" },
 ];
 const TYPES = ["Talki 🐰", "Moby 🤖", "Klaro 🦖"];
 const TRAITS = ["Kind 😊", "Silly 🤪", "Brave 💪"];

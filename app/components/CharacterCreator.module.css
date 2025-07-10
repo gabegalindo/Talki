@@ -29,7 +29,8 @@
 .optionCard {
   padding: 1.5rem 1rem;
   border-radius: var(--border-radius);
-  border: 4px solid transparent;
+  /* border: 4px solid transparent; */
+  border: 1px solid black;
   font-size: 1.2rem;
   font-weight: 700;
   cursor: pointer;
@@ -48,6 +49,7 @@
 }
 
 .optionCard.selected {
+  border: 4px solid;
   border-color: var(--secondary-accent);
   transform: scale(1.05);
   box-shadow: 0 6px 16px var(--shadow-color);

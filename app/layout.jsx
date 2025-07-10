@@ -2,7 +2,7 @@ import "./globals.css";
 import Toolbar from "./components/Toolbar";
 
 export const metadata = {
-  title: "BuddyChat",
+  title: "Talki",
   description: "Your friendly AI chat companion",
 };
 
