@@ -9,17 +9,18 @@ function ChatPageContent() {
   const { background, openModal, modal } = useBackgroundModal();
   const searchParams = useSearchParams();
 
-  const typeMap = {
-    Talki: "animal",
-    Moby: "robot",
-    Klaro: "dinosaur",
-  };
+  const imageUrl = localStorage.getItem("generatedImage");
 
-  const characterType = typeMap[searchParams.get("type")] || "";
+  // const typeMap = {
+  //   Talki: "Talki",
+  //   Moby: "Moby",
+  //   Klaro: "Klaro",
+  //   Sparkli: "Sparkli",
+  // };
 
   const character = {
     color: searchParams.get("color") || "#cccccc",
-    type: characterType || "Friend",
+    type: searchParams.get("type") || "Friend",
     trait: searchParams.get("trait") || "Nice",
   };
 
@@ -42,6 +43,8 @@ function ChatPageContent() {
       <ChatInterface character={character} />
 
       {modal}
+
+      <img src={imageUrl} />
     </div>
   );
 

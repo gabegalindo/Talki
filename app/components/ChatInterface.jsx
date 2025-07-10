@@ -19,7 +19,7 @@ export default function ChatInterface({ character }) {
     setMessages([
       {
         id: 1,
-        text: `Hi! I'm your new ${character.trait} ${character.type} buddy! What should we talk about? 😄`,
+        text: `Hi! I'm your new ${character.trait} buddy ${character.type}! What should we talk about? 😄`,
         sender: "bot",
       },
     ]);
@@ -66,22 +66,27 @@ export default function ChatInterface({ character }) {
       };
 
       recorder.onstop = async () => {
-        const blob = new Blob(chunks, { type: "audio/webm" });
+        const blob = new Blob(recordingChunks, { type: "audio/webm" });
 
         const formData = new FormData();
         formData.append("file", blob, "recording.webm");
 
-        await fetch("/api/upload-audio", {
-          method: "POST",
-          body: formData,
-        });
+        try {
+          const res = await fetch("/api/upload-audio", {
+            method: "POST",
+            body: formData,
+          });
 
-        setMediaRecorder(null);
-        setListening(false);
+          if (!res.ok) {
+            throw new Error("Upload failed");
+          }
 
-        // ✅ Stop all tracks on the stream (frees the mic)
-        stream.getTracks().forEach((track) => track.stop());
-        setAudioStream(null);
+          console.log("Upload successful");
+        } catch (err) {
+          console.error("Upload error:", err);
+        }
+
+        setRecordingChunks([]);
       };
 
       recorder.start();
@@ -110,7 +115,7 @@ export default function ChatInterface({ character }) {
       <header className={styles.chatHeader}>
         <Avatar color={character.color} type={character.type} />
         <div className={styles.characterInfo}>
-          <span className={styles.characterName}>{character.type} Buddy</span>
+          <span className={styles.characterName}>{character.type} </span>
           <span className={styles.characterStatus}>Online</span>
         </div>
       </header>
