@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import MP3MediaRecorder from "mp3-mediarecorder";
 import styles from "./ChatInterface.module.css";
 import Avatar from "./Avatar";
 
@@ -9,7 +10,10 @@ export default function ChatInterface({ character }) {
   const [userInput, setUserInput] = useState("");
   const [listening, setListening] = useState(false);
   const [showKeyboard, setShowKeyboard] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [recordingChunks, setRecordingChunks] = useState([]);
   const chatEndRef = useRef(null);
+  const [audioStream, setAudioStream] = useState(null);
 
   useEffect(() => {
     setMessages([
@@ -46,15 +50,59 @@ export default function ChatInterface({ character }) {
       setMessages((prev) => [...prev, botResponse]);
     }, 1500);
   };
+  const handleMicClick = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      setAudioStream(stream); // ✅ Save this for stopping later
 
-  const handleMicClick = () => {
-    setListening(true);
-    alert("🎤 Voice recording started...");
+      const chunks = [];
+
+      const recorder = new MediaRecorder(stream, {
+        mimeType: "audio/webm",
+      });
+
+      recorder.ondataavailable = (e) => {
+        chunks.push(e.data);
+      };
+
+      recorder.onstop = async () => {
+        const blob = new Blob(chunks, { type: "audio/webm" });
+
+        const formData = new FormData();
+        formData.append("file", blob, "recording.webm");
+
+        await fetch("/api/upload-audio", {
+          method: "POST",
+          body: formData,
+        });
+
+        setMediaRecorder(null);
+        setListening(false);
+
+        // ✅ Stop all tracks on the stream (frees the mic)
+        stream.getTracks().forEach((track) => track.stop());
+        setAudioStream(null);
+      };
+
+      recorder.start();
+      setMediaRecorder(recorder);
+      setListening(true);
+    } catch (err) {
+      console.error("Mic error:", err);
+      alert(`Microphone error: ${err.message}`);
+    }
   };
 
   const handleStop = () => {
-    setListening(false);
-    alert("🛑 Voice recording stopped.");
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+      mediaRecorder.stop(); // triggers onstop where cleanup happens
+    }
+
+    // Optional fallback: stop stream directly
+    if (audioStream) {
+      audioStream.getTracks().forEach((track) => track.stop());
+      setAudioStream(null);
+    }
   };
 
   return (
