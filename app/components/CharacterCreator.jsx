@@ -22,7 +22,18 @@ const COLORS = [
   { name: "Red", value: "#FF0000" },
   { name: "White", value: "#FFFF" },
 ];
-const TYPES = ["Talki 🐰", "Moby 🤖", "Klaro 🦖"];
+const TYPES = [
+  "Talki 🐰",
+  "Moby 🤖",
+  "Klaro 🦖",
+  "Puffy 🐶",
+  "Mewi 🐱",
+  "Waddles 🐧",
+  "Bambo 🐼",
+  "Sparkli 🦄",
+  "Bubbli 🐠",
+  "Zuzu 🐉",
+];
 const TRAITS = ["Kind 😊", "Silly 🤪", "Brave 💪"];
 
 export default function CharacterCreator() {
@@ -64,7 +75,7 @@ export default function CharacterCreator() {
       </section>
 
       <section className={styles.section}>
-        <h2 className={styles.title}>2. Choose a type</h2>
+        <h2 className={styles.title}>2. Choose your character</h2>
         <div className={styles.optionsGrid}>
           {TYPES.map((t) => (
             <button

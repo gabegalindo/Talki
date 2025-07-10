@@ -30,7 +30,7 @@
 
 .characterStatus {
   font-size: 0.9rem;
-  color: #5cb85c;
+  color: #5cb85c; /* Green for 'Online' */
 }
 
 .messageList {
@@ -66,7 +66,6 @@
 
 .inputArea {
   display: flex;
-  align-items: center;
   padding: 1rem;
   border-top: 1px solid var(--border-color);
   background-color: #f9f9f9;
@@ -87,96 +86,35 @@
   border-color: var(--primary-accent);
 }
 
+.micButton,
+.sendButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  padding: 0.75rem;
+}
+
+.micButton {
+  background-color: #e0e0e0;
+  color: var(--text-dark);
+}
+
+.micButton:hover {
+  background-color: #d0d0d0;
+}
+
 .sendButton {
   background-color: var(--primary-accent);
   color: var(--text-light);
   font-weight: 700;
-  border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 50px;
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
 
 .sendButton:hover {
   background-color: #0077b6;
-}
-
-.micContainer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 0 1rem;
-}
-
-.micGroup {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin: 0 auto;
-}
-
-.micMainButton {
-  background-color: var(--primary-accent);
-  color: var(--text-light);
-  border: none;
-  border-radius: 50%;
-  width: 70px;
-  height: 70px;
-  font-size: 2rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.micMainButton:hover {
-  background-color: #0077b6;
-}
-
-.micSmallButton {
-  background-color: var(--primary-accent);
-  color: var(--text-light);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.micSmallButton:hover {
-  background-color: #0077b6;
-}
-
-.keyboardButton {
-  background-color: #e0e0e0;
-  color: var(--text-dark);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.keyboardButton:hover {
-  background-color: #d0d0d0;
-}
-
-.stopButton {
-  background-color: #fab1a0;
-  color: var(--text-dark);
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 30px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.stopButton:hover {
-  background-color: #f99c8b;
 }

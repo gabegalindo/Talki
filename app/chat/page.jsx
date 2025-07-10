@@ -1,6 +1,6 @@
 "use client"; // This page uses hooks
 
-import React, { useState, Suspense } from "react";
+import React, { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import ChatInterface from "../components/ChatInterface";
 import useBackgroundModal from "../hooks/useBackgroundModal";
