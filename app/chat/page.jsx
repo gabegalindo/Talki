@@ -43,8 +43,9 @@ function ChatPageContent() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "flex-start", // Aligns items to the top
           padding: "2rem",
+          marginTop: "0.5rem", // ⬅️ Adjust this value as needed
         }}
       >
         <h2 style={{ fontSize: "3rem", margin: "0 auto 3rem auto" }}>
@@ -55,7 +56,7 @@ function ChatPageContent() {
             src={imageUrl}
             alt="Generated Character"
             style={{
-              width: "25rem",
+              width: "30rem",
               borderRadius: "50%",
               boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
               background: "#fff",
