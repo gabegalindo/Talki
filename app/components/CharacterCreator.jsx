@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./CharacterCreator.module.css";
+import Spinner from "./Spinner"; // Import the Spinner component
 
 const COLORS = [
   { name: "Blue", value: "#3498db" },
@@ -56,9 +57,13 @@ export default function CharacterCreator() {
   const [characterName, setCharacterName] = useState("");
   const [trait, setTrait] = useState("");
   const [background, setBackground] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleStartChat = async () => {
+  const handleStartChat = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
     if (color && animal && trait && background && characterName) {
       try {
         const response = await fetch(
@@ -99,6 +104,8 @@ export default function CharacterCreator() {
       } catch (err) {
         console.error("Image generation failed:", err);
         alert("Failed to generate image. Please try again.");
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -205,6 +212,27 @@ export default function CharacterCreator() {
       >
         Let's Chat!
       </button>
+      {loading && (
+        <div className={styles.loadingOverlay}>
+          <Spinner />
+          <p>Generating your character...</p>
+        </div>
+      )}
+      <style jsx>{`
+        .${styles.loadingOverlay} {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(255, 255, 255, 0.8);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+        }
+      `}</style>
     </div>
   );
 }

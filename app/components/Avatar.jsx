@@ -38,7 +38,7 @@ export default function Avatar({ color }) {
           src={imageUrl}
           alt="Generated Character"
           style={{
-            width: "3rem",
+            width: "2.8rem",
             borderRadius: "50%",
             boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
             background: "#fff",

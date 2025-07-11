@@ -41,17 +41,21 @@ function ChatPageContent() {
         style={{
           flex: 1,
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
           padding: "2rem",
         }}
       >
+        <h2 style={{ fontSize: "3rem", margin: "0 auto 3rem auto" }}>
+          {character.name}
+        </h2>
         {imageUrl && (
           <img
             src={imageUrl}
             alt="Generated Character"
             style={{
-              width: "20rem",
+              width: "25rem",
               borderRadius: "50%",
               boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
               background: "#fff",
