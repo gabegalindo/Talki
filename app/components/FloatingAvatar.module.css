@@ -1,0 +1,44 @@
+.floatingAvatar {
+  position: fixed;
+  bottom: 120px;
+  right: 20px;
+  width: 20rem;
+  border-radius: 50%;
+  object-fit: cover;
+  z-index: 1000;
+  transition: transform 0.2s;
+}
+
+.bounce {
+  animation: bounceAnim 1s ease-in-out infinite;
+}
+
+@keyframes bounceAnim {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.shake {
+  animation: shakeAnim 0.4s linear infinite;
+}
+
+@keyframes shakeAnim {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+  75% {
+    transform: translateX(-6px);
+  }
+}

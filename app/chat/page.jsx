@@ -43,8 +43,6 @@ function ChatPageContent() {
       <ChatInterface character={character} />
 
       {modal}
-
-      <img src={imageUrl} />
     </div>
   );
 

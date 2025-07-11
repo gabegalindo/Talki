@@ -1,19 +1,24 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import MP3MediaRecorder from "mp3-mediarecorder";
 import styles from "./ChatInterface.module.css";
 import Avatar from "./Avatar";
+import FloatingAvatar from "./FloatingAvatar";
 
 export default function ChatInterface({ character }) {
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState("");
-  const [listening, setListening] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const [showKeyboard, setShowKeyboard] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [recordingChunks, setRecordingChunks] = useState([]);
+  const [isProcessingSTT, setIsProcessingSTT] = useState(false);
+  const [lastSender, setLastSender] = useState(null);
+  const [isBotTyping, setIsBotTyping] = useState(false);
+  const [botMessageMeta, setBotMessageMeta] = useState(null); // { id, text }
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
   const chatEndRef = useRef(null);
-  const [audioStream, setAudioStream] = useState(null);
+
+  const imageUrl = localStorage.getItem("generatedImage");
 
   useEffect(() => {
     setMessages([
@@ -26,6 +31,11 @@ export default function ChatInterface({ character }) {
   }, [character]);
 
   useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+
+    if (messages.length > 0) {
+      setLastSender(messages[messages.length - 1].sender);
+    }
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
@@ -41,72 +51,108 @@ export default function ChatInterface({ character }) {
     setMessages((prev) => [...prev, newUserMessage]);
     setUserInput("");
 
+    // --- AI Response Simulation ---
+    setIsBotTyping(true);
+
     setTimeout(() => {
+      const botText = `That's so cool! Tell me more. 🤔`;
+      const botId = Date.now() + 1;
+
       const botResponse = {
-        id: Date.now() + 1,
-        text: `That's so cool! Tell me more. 🤔`,
+        id: botId,
+        text: botText,
         sender: "bot",
       };
+
       setMessages((prev) => [...prev, botResponse]);
+      setBotMessageMeta({ id: botId, text: botText }); // <-- unique trigger
+      setIsBotTyping(false);
     }, 1500);
   };
+
   const handleMicClick = async () => {
+    if (isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      setAudioStream(stream); // ✅ Save this for stopping later
+      const recorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+      mediaRecorderRef.current = recorder;
+      audioChunksRef.current = [];
 
-      const chunks = [];
-
-      const recorder = new MediaRecorder(stream, {
-        mimeType: "audio/webm",
-      });
-
-      recorder.ondataavailable = (e) => {
-        chunks.push(e.data);
+      recorder.ondataavailable = (event) => {
+        audioChunksRef.current.push(event.data);
       };
 
       recorder.onstop = async () => {
-        const blob = new Blob(recordingChunks, { type: "audio/webm" });
-
+        setIsProcessingSTT(true);
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: "audio/webm",
+        });
         const formData = new FormData();
-        formData.append("file", blob, "recording.webm");
+        formData.append("audio_file", audioBlob, "recording.webm");
 
         try {
-          const res = await fetch("/api/upload-audio", {
+          // Next.js API 라우트를 통해 요청
+          const res = await fetch("http://10.30.174.24:8000/api/stt", {
             method: "POST",
             body: formData,
           });
 
           if (!res.ok) {
-            throw new Error("Upload failed");
+            const errorData = await res.json();
+            throw new Error(
+              errorData.error || "음성 인식에 실패했습니다. 다시 시도해주세요."
+            );
           }
 
-          console.log("Upload successful");
+          const data = await res.json();
+          if (data.text && data.text.trim() !== "") {
+            const newUserMessage = {
+              id: Date.now(),
+              text: data.text,
+              sender: "user",
+              isFromSTT: true,
+            };
+            setMessages((prev) => [...prev, newUserMessage]);
+          } else {
+            const errorMessage = {
+              id: Date.now(),
+              text: "음성을 인식하지 못했습니다. 다시 말씀해주세요.",
+              sender: "system",
+              isError: true,
+            };
+            setMessages((prev) => [...prev, errorMessage]);
+          }
         } catch (err) {
-          console.error("Upload error:", err);
+          console.error("STT error:", err);
+          const errorMessage = {
+            id: Date.now(),
+            text: `오류가 발생했습니다: ${err.message}`,
+            sender: "system",
+            isError: true,
+          };
+          setMessages((prev) => [...prev, errorMessage]);
+        } finally {
+          setIsProcessingSTT(false);
         }
-
-        setRecordingChunks([]);
       };
 
       recorder.start();
-      setMediaRecorder(recorder);
-      setListening(true);
+      setIsRecording(true);
     } catch (err) {
       console.error("Mic error:", err);
-      alert(`Microphone error: ${err.message}`);
-    }
-  };
-
-  const handleStop = () => {
-    if (mediaRecorder && mediaRecorder.state === "recording") {
-      mediaRecorder.stop(); // triggers onstop where cleanup happens
-    }
-
-    // Optional fallback: stop stream directly
-    if (audioStream) {
-      audioStream.getTracks().forEach((track) => track.stop());
-      setAudioStream(null);
+      const errorMessage = {
+        id: Date.now(),
+        text: `마이크 접근 오류: ${err.message}`,
+        sender: "system",
+        isError: true,
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+      setIsProcessingSTT(false);
     }
   };
 
@@ -119,20 +165,40 @@ export default function ChatInterface({ character }) {
           <span className={styles.characterStatus}>Online</span>
         </div>
       </header>
-
       <div className={styles.messageList}>
         {messages.map((msg) => (
           <div
             key={msg.id}
             className={`${styles.messageBubble} ${
               msg.sender === "user" ? styles.userMessage : styles.botMessage
-            }`}
+            } ${msg.isError ? styles.errorMessage : ""}`}
           >
             {msg.text}
+            {msg.isFromSTT && <span className={styles.sttBadge}>음성인식</span>}
           </div>
         ))}
+        {isProcessingSTT && (
+          <div className={`${styles.messageBubble} ${styles.typingIndicator}`}>
+            음성 인식 중...
+          </div>
+        )}
         <div ref={chatEndRef} />
       </div>
+
+      {/* <img
+        className={`${styles.characterImage} ${
+          lastSender === "bot" ? styles.animateResponse : ""
+        }`}
+        src={imageUrl}
+        alt={character.type}
+      /> */}
+
+      <FloatingAvatar
+        character={imageUrl}
+        lastSender={lastSender}
+        isBotTyping={isBotTyping}
+        botMessageMeta={botMessageMeta}
+      />
 
       <form onSubmit={handleSendMessage} className={styles.inputArea}>
         {showKeyboard ? (
@@ -161,22 +227,17 @@ export default function ChatInterface({ character }) {
             <div className={styles.micGroup}>
               <button
                 type="button"
-                className={styles.micMainButton}
+                className={`${styles.micMainButton} ${
+                  isRecording ? styles.recording : ""
+                }`}
                 onClick={handleMicClick}
-                aria-label="Start talking"
+                aria-label={isRecording ? "Stop recording" : "Start talking"}
               >
-                🎤
+                {isRecording ? "⏹" : "🎤"}
               </button>
 
-              {listening && (
-                <button
-                  type="button"
-                  className={styles.stopButton}
-                  onClick={handleStop}
-                  aria-label="Stop recording"
-                >
-                  ⏹ Stop
-                </button>
+              {isRecording && (
+                <span className={styles.recordingIndicator}>Recording...</span>
               )}
             </div>
 
