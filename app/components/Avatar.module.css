@@ -1,0 +1,26 @@
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid white;
+  box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.emoji {
+  font-size: 2rem;
+  /* Fix for emoji vertical alignment */
+  line-height: 1;
+  display: inline-block;
+  transform: translateY(1px);
+}
+
+.name {
+  display: block;
+  font-weight: bold;
+  font-size: 0.8rem;
+  text-align: center;
+  margin-top: 0.3rem;
+}
