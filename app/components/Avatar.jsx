@@ -26,12 +26,25 @@ const getEmoji = (type) => {
       return "😊";
   }
 };
-export default function Avatar({ color, type }) {
-  const emoji = getEmoji(type);
+export default function Avatar({ color }) {
+  // const emoji = getEmoji(type);
+  const imageUrl = localStorage.getItem("generatedImage");
 
   return (
     <div className={styles.avatar} style={{ backgroundColor: color }}>
-      <span className={styles.emoji}>{emoji}</span>
+      {/* <span className={styles.emoji}>{emoji}</span> */}
+      {imageUrl && (
+        <img
+          src={imageUrl}
+          alt="Generated Character"
+          style={{
+            width: "3rem",
+            borderRadius: "50%",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+            background: "#fff",
+          }}
+        />
+      )}
       {/* shows "Talki", "Zuzu", etc. */}
     </div>
   );

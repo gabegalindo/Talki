@@ -29,7 +29,6 @@ const TYPES = [
   "Zuzu 🐉",
 ];
 const TRAITS = ["Kind 😊", "Silly 🤪", "Brave 💪"];
-
 const BACKGROUNDS = [
   { name: "Forest", value: "/backgrounds/forest.jpg" },
   { name: "Beach", value: "/backgrounds/beach.jpg" },
@@ -37,49 +36,46 @@ const BACKGROUNDS = [
   { name: "Pastel", value: "/backgrounds/pastel.jpg" },
 ];
 
-const ANIMALS = [
-  { label: "Bunny 🐰", value: "bunny" },
-  { label: "Robot 🤖", value: "robot" },
-  { label: "Dinosaur 🦖", value: "dinosaur" },
-  { label: "Dog 🐶", value: "dog" },
-  { label: "Cat 🐱", value: "cat" },
-  { label: "Penguin 🐧", value: "penguin" },
-  { label: "Panda 🐼", value: "panda" },
-  { label: "Unicorn 🦄", value: "unicorn" },
-  { label: "Fish 🐠", value: "fish" },
-  { label: "Dragon 🐉", value: "dragon" },
-];
-
 export default function CharacterCreator() {
   const [color, setColor] = useState("");
-  const [animal, setAnimal] = useState("");
-  const [characterName, setCharacterName] = useState("");
+  const [type, setType] = useState("");
   const [trait, setTrait] = useState("");
   const [background, setBackground] = useState("");
   const router = useRouter();
 
+  const getAnimal = (type) => {
+    switch (type?.toLowerCase().split(" ")[0]) {
+      case "talki": return "bunny";
+      case "moby": return "robot";
+      case "klaro": return "dinosaur";
+      case "puffy": return "dog";
+      case "mewi": return "cat";
+      case "waddles": return "penguin";
+      case "bambo": return "panda";
+      case "sparkli": return "unicorn";
+      case "bubbli": return "fish";
+      case "zuzu": return "dragon";
+      default: return "friend";
+    }
+  };
+
   const handleStartChat = async () => {
-    if (color && animal && trait && background && characterName) {
+    if (color && type && trait && background) {
       try {
-        const response = await fetch(
-          "http://10.30.174.24:8000/api/generate-image",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              color: color,
-              animal: animal,
-              name: characterName,
-              background: background,
-              emotion: trait.split(" ")[0].toLowerCase(),
-            }),
-          }
-        );
+        console.log("Generating image with:", { color, type, trait, background });
+        const response = await fetch("http://10.30.174.24:8000/api/generate-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            color: color,
+            animal: getAnimal(type),
+            background: background, // use selected background
+            emotion: trait.split(" ")[0].toLowerCase(),
+          }),
+        });
 
         if (!response.ok) {
-          throw new Error(
-            `Image generation failed with status: ${response.status}`
-          );
+          throw new Error(`Image generation failed with status: ${response.status}`);
         }
 
         const blob = await response.blob();
@@ -89,8 +85,7 @@ export default function CharacterCreator() {
 
         const query = new URLSearchParams({
           color,
-          animal,
-          name: characterName, // pass the user-inputted name
+          type: type.split(" ")[0],
           trait: trait.split(" ")[0],
           background,
         }).toString();
@@ -114,10 +109,7 @@ export default function CharacterCreator() {
               className={`${styles.optionCard} ${
                 color === c.value ? styles.selected : ""
               }`}
-              style={{
-                backgroundColor: c.value,
-                color: c.value === "#FFFFFF" ? "#000" : "#FFF",
-              }}
+              style={{ backgroundColor: c.value, color: c.value === '#FFFFFF' ? '#000' : '#FFF' }}
               onClick={() => setColor(c.value)}
               aria-pressed={color === c.value}
             >
@@ -128,38 +120,21 @@ export default function CharacterCreator() {
       </section>
 
       <section className={styles.section}>
-        <h2 className={styles.title}>2. Choose your own character</h2>
+        <h2 className={styles.title}>2. Choose your character</h2>
         <div className={styles.optionsGrid}>
-          {ANIMALS.map((a) => (
+          {TYPES.map((t) => (
             <button
-              key={a.value}
+              key={t}
               className={`${styles.optionCard} ${
-                animal === a.value ? styles.selected : ""
+                type === t ? styles.selected : ""
               }`}
-              onClick={() => setAnimal(a.value)}
-              aria-pressed={animal === a.value}
+              onClick={() => setType(t)}
+              aria-pressed={type === t}
             >
-              {a.label}
+              {t}
             </button>
           ))}
         </div>
-        <input
-          type="text"
-          className={styles.textInput}
-          placeholder="Enter your character's name; Ex. Talki"
-          value={characterName}
-          onChange={(e) => setCharacterName(e.target.value)}
-          style={{
-            marginTop: "1rem",
-            width: "100%",
-            fontSize: "1.2rem",
-            padding: "0.75rem",
-            border: "2px solid var(--border-color)",
-            borderRadius: "50px",
-            fontFamily: "var(--font-family-main)",
-            boxSizing: "border-box",
-          }}
-        />
       </section>
 
       <section className={styles.section}>
@@ -186,9 +161,7 @@ export default function CharacterCreator() {
           {BACKGROUNDS.map((bg) => (
             <button
               key={bg.name}
-              className={`${styles.optionCard} ${
-                background === bg.value ? styles.selected : ""
-              }`}
+              className={`${styles.optionCard} ${background === bg.value ? styles.selected : ""}`}
               onClick={() => setBackground(bg.value)}
               aria-pressed={background === bg.value}
             >
@@ -201,7 +174,7 @@ export default function CharacterCreator() {
       <button
         className={styles.startButton}
         onClick={handleStartChat}
-        disabled={!color || !animal || !trait || !background || !characterName}
+        disabled={!color || !type || !trait || !background}
       >
         Let's Chat!
       </button>

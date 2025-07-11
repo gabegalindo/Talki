@@ -19,7 +19,7 @@ function ChatPageContent() {
 
   const character = {
     color: searchParams.get("color") || "#cccccc",
-    type: searchParams.get("type") || "Friend",
+    name: searchParams.get("name") || "Friend",
     trait: searchParams.get("trait") || "Nice",
     background: searchParams.get("background") || "",
   };

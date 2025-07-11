@@ -1,9 +1,9 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from "react";
 import styles from "./ChatInterface.module.css";
 import Avatar from "./Avatar";
+import { useSearchParams } from "next/navigation";
 
 export default function ChatInterface({ character }) {
   const [messages, setMessages] = useState([]);
@@ -14,12 +14,14 @@ export default function ChatInterface({ character }) {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const chatEndRef = useRef(null);
+  const searchParams = useSearchParams();
+  const characterName = searchParams.get("name") || "Friend";
 
   useEffect(() => {
     setMessages([
       {
         id: 1,
-        text: `Hi! I'm your new ${character.trait} buddy ${character.type}! What should we talk about? 😄`,
+        text: `Hi! I'm your new ${character.trait} buddy ${character.name}! What should we talk about? 😄`,
         sender: "bot",
       },
     ]);
@@ -72,7 +74,9 @@ export default function ChatInterface({ character }) {
 
       recorder.onstop = async () => {
         setIsProcessingSTT(true);
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: "audio/webm",
+        });
         const formData = new FormData();
         formData.append("audio_file", audioBlob, "recording.webm");
 
@@ -85,16 +89,18 @@ export default function ChatInterface({ character }) {
 
           if (!res.ok) {
             const errorData = await res.json();
-            throw new Error(errorData.error || "음성 인식에 실패했습니다. 다시 시도해주세요.");
+            throw new Error(
+              errorData.error || "음성 인식에 실패했습니다. 다시 시도해주세요."
+            );
           }
 
           const data = await res.json();
           if (data.text && data.text.trim() !== "") {
-            const newUserMessage = { 
-              id: Date.now(), 
-              text: data.text, 
+            const newUserMessage = {
+              id: Date.now(),
+              text: data.text,
               sender: "user",
-              isFromSTT: true
+              isFromSTT: true,
             };
             setMessages((prev) => [...prev, newUserMessage]);
           } else {
@@ -102,7 +108,7 @@ export default function ChatInterface({ character }) {
               id: Date.now(),
               text: "음성을 인식하지 못했습니다. 다시 말씀해주세요.",
               sender: "system",
-              isError: true
+              isError: true,
             };
             setMessages((prev) => [...prev, errorMessage]);
           }
@@ -112,7 +118,7 @@ export default function ChatInterface({ character }) {
             id: Date.now(),
             text: `오류가 발생했습니다: ${err.message}`,
             sender: "system",
-            isError: true
+            isError: true,
           };
           setMessages((prev) => [...prev, errorMessage]);
         } finally {
@@ -128,20 +134,19 @@ export default function ChatInterface({ character }) {
         id: Date.now(),
         text: `마이크 접근 오류: ${err.message}`,
         sender: "system",
-        isError: true
+        isError: true,
       };
       setMessages((prev) => [...prev, errorMessage]);
       setIsProcessingSTT(false);
     }
   };
 
-
   return (
     <div className={styles.chatContainer}>
       <header className={styles.chatHeader}>
-        <Avatar color={character.color} type={character.type} />
+        <Avatar color={character.color} />
         <div className={styles.characterInfo}>
-          <span className={styles.characterName}>{character.type} </span>
+          <span className={styles.characterName}>{characterName} </span>
           <span className={styles.characterStatus}>Online</span>
         </div>
       </header>
@@ -152,7 +157,7 @@ export default function ChatInterface({ character }) {
             key={msg.id}
             className={`${styles.messageBubble} ${
               msg.sender === "user" ? styles.userMessage : styles.botMessage
-            } ${msg.isError ? styles.errorMessage : ''}`}
+            } ${msg.isError ? styles.errorMessage : ""}`}
           >
             {msg.text}
             {msg.isFromSTT && <span className={styles.sttBadge}>음성인식</span>}
@@ -193,11 +198,13 @@ export default function ChatInterface({ character }) {
             <div className={styles.micGroup}>
               <button
                 type="button"
-                className={`${styles.micMainButton} ${isRecording ? styles.recording : ''}`}
+                className={`${styles.micMainButton} ${
+                  isRecording ? styles.recording : ""
+                }`}
                 onClick={handleMicClick}
                 aria-label={isRecording ? "Stop recording" : "Start talking"}
               >
-                {isRecording ? '⏹' : '🎤'}
+                {isRecording ? "⏹" : "🎤"}
               </button>
 
               {isRecording && (
