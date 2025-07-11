@@ -28,7 +28,10 @@ export default function ChatInterface({ character }) {
   }, [character]);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    chatEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
   }, [messages]);
 
   const handleSendMessage = (e) => {
