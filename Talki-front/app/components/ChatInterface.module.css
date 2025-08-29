@@ -1,0 +1,228 @@
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--toolbar-height));
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: var(--background-secondary);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 20px var(--shadow-color);
+  overflow: hidden;
+}
+
+.chatHeader {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.characterInfo {
+  margin-left: 1rem;
+}
+
+.characterName {
+  font-weight: 700;
+  font-size: 1.2rem;
+  display: block;
+}
+
+.characterStatus {
+  font-size: 0.9rem;
+  color: #5cb85c;
+}
+
+.messageList {
+  flex-grow: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.messageBubble {
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--border-radius);
+  max-width: 75%;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.botMessage {
+  background-color: #e9ecef;
+  color: var(--text-dark);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.userMessage {
+  background-color: var(--primary-accent);
+  color: var(--text-light);
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.inputArea {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+  background-color: #f9f9f9;
+  gap: 0.5rem;
+}
+
+.textInput {
+  flex-grow: 1;
+  padding: 0.75rem;
+  border: 2px solid var(--border-color);
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-family: var(--font-family-main);
+}
+
+.textInput:focus {
+  outline: none;
+  border-color: var(--primary-accent);
+}
+
+.sendButton {
+  background-color: var(--primary-accent);
+  color: var(--text-light);
+  font-weight: 700;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.sendButton:hover {
+  background-color: #0077b6;
+}
+
+.micContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 1rem;
+}
+
+.micGroup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0 auto;
+}
+
+.micMainButton {
+  background-color: var(--primary-accent);
+  color: var(--text-light);
+  border: none;
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.micMainButton:hover {
+  background-color: #0077b6;
+}
+
+.micSmallButton {
+  background-color: var(--primary-accent);
+  color: var(--text-light);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.micSmallButton:hover {
+  background-color: #0077b6;
+}
+
+.keyboardButton {
+  background-color: #e0e0e0;
+  color: var(--text-dark);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.keyboardButton:hover {
+  background-color: #d0d0d0;
+}
+
+.stopButton {
+  background-color: #fab1a0;
+  color: var(--text-dark);
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.stopButton:hover {
+  background-color: #f99c8b;
+}
+
+
+.sttBadge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 6px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  font-size: 0.7em;
+  color: #666;
+}
+
+.typingIndicator {
+  color: #666;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.errorMessage {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+/* 기존 messageBubble 스타일에 추가 */
+.messageBubble {
+  position: relative;
+  /* 기존 스타일 유지 */
+}
+/* 타이핑 효과를 위한 커서 스타일 */
+.cursor {
+  display: inline-block;
+  margin-left: 2px;
+  animation: blink 1s infinite;
+  font-weight: bold;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* 타이핑 중인 메시지 스타일 */
+.typing {
+  min-height: 1.5em; /* 텍스트가 없을 때도 높이 유지 */
+}
