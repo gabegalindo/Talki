@@ -74,8 +74,7 @@ npm run dev
 
 ## Demo video
 
-- Demo video (hosted link): <ADD_YOUR_LINK_HERE>
-- Demo video (local file path, example): `Talki-back/static/generated_demo.mp4`
+<https://youtu.be/gc4kM7IjK_0>
 
 ## Project structure
 
