@@ -1,6 +1,6 @@
 # Talki
 
-Talki: it means Talk in English and Bunny in Korea! Talki is a voice-driven chat application with frontend and backend components. The frontend is a Next.js app that provides a conversational UI and media upload endpoints; the backend is a Flask-based service that handles audio processing, text-to-speech and speech-to-text, and image generation.
+Talki: it means Talk in English and Bunny in Korean! Talki is a voice-driven chat application with frontend and backend components. The frontend is a Next.js app that provides a conversational UI and media upload endpoints; the backend is a Flask-based service that handles audio processing, text-to-speech and speech-to-text, and image generation.
 
 This repository contains two main folders:
 
